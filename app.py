@@ -5,57 +5,64 @@ import pandas as pd
 import streamlit as st
 
 # ══════════════════════════════════════════════════════════════════
-# 1. ADVANCED UI & BEAUTIFICATION (CSS)
+# 1. CLEAN INSTITUTIONAL DARK UI
 # ══════════════════════════════════════════════════════════════════
-st.set_page_config(page_title="Loan Risk AI", page_icon="🏦", layout="centered")
+st.set_page_config(page_title="Loan Risk Analyzer", page_icon="🏦", layout="wide")
 
 def inject_design():
     st.markdown("""
     <style>
-    /* Gradient Background */
+    /* Deep Navy Professional Background */
     .stApp {
-        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-        background-attachment: fixed;
+        background-color: #0f172a;
+        color: #f1f5f9;
     }
 
-    /* Glassmorphism Effect for containers */
+    /* Form Container */
     div[data-testid="stForm"] {
-        background: rgba(255, 255, 255, 0.4);
-        backdrop-filter: blur(10px);
-        border-radius: 20px;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        padding: 30px;
-        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+        background: #1e293b;
+        border-radius: 12px;
+        border: 1px solid #334155;
+        padding: 40px;
     }
 
-    /* Professional Headers */
-    h1 { color: #1e293b; font-family: 'DM Sans', sans-serif; font-weight: 700; }
-    
-    /* Result Cards */
+    /* Input text and label visibility */
+    label, p, .stNumberInput input {
+        color: #e2e8f0 !important;
+    }
+
+    /* Result styling */
     .result-card {
-        padding: 25px;
-        border-radius: 15px;
+        padding: 24px;
+        border-radius: 8px;
         text-align: center;
         margin-top: 20px;
-        backdrop-filter: blur(5px);
+        font-weight: 600;
     }
-    .risk-high { background: rgba(255, 235, 235, 0.9); border: 2px solid #ef4444; color: #b91c1c; }
-    .risk-low { background: rgba(236, 253, 245, 0.9); border: 2px solid #10b981; color: #065f46; }
+    .risk-high { background: #7f1d1d; border: 1px solid #f87171; color: #fef2f2; }
+    .risk-low { background: #064e3b; border: 1px solid #34d399; color: #ecfdf5; }
 
-    /* Custom Button */
+    /* Button Enhancement */
     .stButton>button {
-        background: linear-gradient(90deg, #1e3a8a 0%, #3b82f6 100%);
-        color: white; border: none; border-radius: 10px;
-        font-weight: 600; transition: 0.3s;
+        background: #2563eb;
+        color: white;
+        border-radius: 6px;
+        font-weight: bold;
+        width: 100%;
+        border: none;
     }
-    .stButton>button:hover { opacity: 0.9; transform: translateY(-2px); }
+    
+    .header-text {
+        text-align: center;
+        margin-bottom: 40px;
+    }
     </style>
     """, unsafe_allow_html=True)
 
 inject_design()
 
 # ══════════════════════════════════════════════════════════════════
-# 2. ASSET LOADING
+# 2. DATA UTILITIES
 # ══════════════════════════════════════════════════════════════════
 @st.cache_resource
 def load_assets():
@@ -72,73 +79,65 @@ def load_assets():
 assets, missing_files = load_assets()
 
 # ══════════════════════════════════════════════════════════════════
-# 3. SIDEBAR BRANDING
+# 3. INTERFACE
 # ══════════════════════════════════════════════════════════════════
-with st.sidebar:
-    st.markdown("# 🏦 LoanRisk AI")
-    st.markdown("---")
-    st.markdown("### 👨‍💻 Developer")
-    st.info("**Nivedh**\nBioinformatics & ML")
-    st.markdown("---")
-    if not missing_files:
-        st.success("Model Status: Online")
-    else:
-        st.error("Model Status: Offline")
-
-# ══════════════════════════════════════════════════════════════════
-# 4. MAIN INTERFACE
-# ══════════════════════════════════════════════════════════════════
-st.title("Loan Default Risk Analysis")
-st.write("Determine creditworthiness using high-precision machine learning.")
+st.markdown("<div class='header-text'><h1>🏦 Loan Default Risk Classification</h1><p>ML-Powered Credit Risk Assessment Tool</p></div>", unsafe_allow_html=True)
 
 if missing_files:
-    st.error(f"Required files missing: {', '.join(missing_files)}")
+    st.error(f"Required system files missing: {', '.join(missing_files)}")
     st.stop()
 
-with st.form("loan_form"):
-    st.markdown("### 📄 Applicant Profile")
-    c1, c2 = st.columns(2)
-    with c1:
-        income = st.number_input("Annual Income ($)", 0, 10000000, 50000)
-        credit = st.number_input("Loan Amount ($)", 0, 10000000, 100000)
-        annuity = st.number_input("Monthly Installment ($)", 0, 500000, 5000)
-    with c2:
-        age = st.slider("Age", 18, 90, 35)
-        emp = st.slider("Years Employed", 0, 50, 5)
-        ext2 = st.slider("Credit Score (Ext 2)", 0.0, 1.0, 0.5)
-        ext3 = st.slider("Credit Score (Ext 3)", 0.0, 1.0, 0.5)
-    
-    submitted = st.form_submit_button("GENERATE RISK REPORT")
+# Layout centering
+_, center_col, _ = st.columns([1, 2, 1])
 
-if submitted:
-    # Feature engineering to match training
-    raw = {
-        "AMT_INCOME_TOTAL": income, "AMT_CREDIT": credit, "AMT_ANNUITY": annuity,
-        "DAYS_BIRTH": -int(age * 365), "DAYS_EMPLOYED": -int(emp * 365),
-        "EXT_SOURCE_2": ext2, "EXT_SOURCE_3": ext3,
-        "CREDIT_INCOME_RATIO": credit / (income + 1), "ANNUITY_INCOME_RATIO": annuity / (income + 1)
-    }
-    
-    top_feats = assets["top_feats"]
-    X = pd.DataFrame([{f: raw.get(f, 0.0) for f in top_feats}])[top_feats]
-    
-    prob = assets["model"].predict_proba(X)[0][1]
-    thresh = assets["threshold"]["threshold"]
+with center_col:
+    with st.form("loan_analysis_form"):
+        st.subheader("Input Financial Profile")
+        
+        income = st.number_input("Annual Income ($)", 0, 1000000, 60000)
+        credit = st.number_input("Total Credit Requested ($)", 0, 2000000, 150000)
+        
+        col_left, col_right = st.columns(2)
+        with col_left:
+            age = st.slider("Applicant Age", 18, 85, 30)
+            ext_a = st.slider("Internal Risk Score A", 0.0, 1.0, 0.5)
+        with col_right:
+            employment = st.slider("Years of Employment", 0, 50, 5)
+            ext_b = st.slider("Internal Risk Score B", 0.0, 1.0, 0.5)
+            
+        submitted = st.form_submit_button("RUN CLASSIFICATION")
 
-    st.markdown("---")
-    st.markdown("### 📊 Analysis Result")
-    
-    # Visual Probability Bar
-    st.write(f"Confidence Level: {prob:.1%}")
-    st.progress(prob)
+    if submitted:
+        # Preprocessing & Feature Engineering
+        # Based on Model_training.ipynb logic
+        raw_data = {
+            "AMT_INCOME_TOTAL": income, 
+            "AMT_CREDIT": credit, 
+            "DAYS_BIRTH": -int(age * 365), 
+            "DAYS_EMPLOYED": -int(employment * 365),
+            "EXT_SOURCE_2": ext_a, 
+            "EXT_SOURCE_3": ext_b,
+            "CREDIT_INCOME_RATIO": credit / (income + 1)
+        }
+        
+        top_feats = assets["top_feats"]
+        # Align input with the top 50 features used in training
+        input_df = pd.DataFrame([{f: raw_data.get(f, 0.0) for f in top_feats}])[top_feats]
+        
+        probability = assets["model"].predict_proba(input_df)[0][1]
+        decision_threshold = assets["threshold"]["threshold"]
 
-    if prob >= thresh:
-        st.markdown(f"""<div class="result-card risk-high">
-            <h2>⚠️ HIGH RISK</h2>
-            <p>The probability of default ({prob:.1%}) exceeds the safety threshold of {thresh:.2%}.</p>
-            </div>""", unsafe_allow_html=True)
-    else:
-        st.markdown(f"""<div class="result-card risk-low">
-            <h2>✅ APPROVED</h2>
-            <p>The probability of default ({prob:.1%}) is within safe limits (Threshold: {thresh:.2%}).</p>
-            </div>""", unsafe_allow_html=True)
+        st.markdown("---")
+        st.write(f"**Default Probability:** {probability:.1%}")
+        st.progress(probability)
+
+        if probability >= decision_threshold:
+            st.markdown(f"""<div class="result-card risk-high">
+                <h3>RESULT: HIGH RISK</h3>
+                <p>Classification: LIKELY DEFAULT</p>
+                </div>""", unsafe_allow_html=True)
+        else:
+            st.markdown(f"""<div class="result-card risk-low">
+                <h3>RESULT: LOW RISK</h3>
+                <p>Classification: LIKELY REPAYMENT</p>
+                </div>""", unsafe_allow_html=True)
