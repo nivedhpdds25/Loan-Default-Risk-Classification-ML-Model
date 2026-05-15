@@ -5,57 +5,53 @@ import pandas as pd
 import streamlit as st
 
 # ══════════════════════════════════════════════════════════════════
-# 1. CLEAN INSTITUTIONAL DARK UI
+# 1. BENTO BOX & GLASSMORPHISM UI
 # ══════════════════════════════════════════════════════════════════
-st.set_page_config(page_title="Loan Risk Analyzer", page_icon="🏦", layout="wide")
+st.set_page_config(page_title="Loan Risk Dashboard", page_icon="🏦", layout="wide")
 
 def inject_design():
     st.markdown("""
     <style>
-    /* Deep Navy Professional Background */
+    /* Technical Grid Background */
     .stApp {
         background-color: #0f172a;
+        background-image: 
+            linear-gradient(rgba(30, 41, 59, 0.4) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(30, 41, 59, 0.4) 1px, transparent 1px);
+        background-size: 35px 35px;
         color: #f1f5f9;
     }
 
-    /* Form Container */
+    /* Bento Box Card Style */
+    .bento-card {
+        background: rgba(30, 41, 59, 0.6);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 25px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Gradient Headers */
+    h1, h2, h3 {
+        background: linear-gradient(90deg, #60a5fa, #a78bfa);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: 800;
+    }
+
+    /* Hide standard Streamlit elements for a cleaner look */
     div[data-testid="stForm"] {
-        background: #1e293b;
-        border-radius: 12px;
-        border: 1px solid #334155;
-        padding: 40px;
+        border: none !important;
+        padding: 0 !important;
+        background: transparent !important;
     }
 
-    /* Input text and label visibility */
-    label, p, .stNumberInput input {
-        color: #e2e8f0 !important;
-    }
-
-    /* Result styling */
-    .result-card {
-        padding: 24px;
-        border-radius: 8px;
-        text-align: center;
-        margin-top: 20px;
-        font-weight: 600;
-    }
-    .risk-high { background: #7f1d1d; border: 1px solid #f87171; color: #fef2f2; }
-    .risk-low { background: #064e3b; border: 1px solid #34d399; color: #ecfdf5; }
-
-    /* Button Enhancement */
-    .stButton>button {
-        background: #2563eb;
-        color: white;
-        border-radius: 6px;
-        font-weight: bold;
-        width: 100%;
-        border: none;
-    }
-    
-    .header-text {
-        text-align: center;
-        margin-bottom: 40px;
-    }
+    /* Result Cards */
+    .res-box { padding: 20px; border-radius: 12px; text-align: center; }
+    .risk-high { background: rgba(127, 29, 29, 0.4); border: 1px solid #ef4444; color: #fecaca; }
+    .risk-low { background: rgba(6, 78, 59, 0.4); border: 1px solid #10b981; color: #d1fae5; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -81,63 +77,79 @@ assets, missing_files = load_assets()
 # ══════════════════════════════════════════════════════════════════
 # 3. INTERFACE
 # ══════════════════════════════════════════════════════════════════
-st.markdown("<div class='header-text'><h1>🏦 Loan Default Risk Classification</h1><p>ML-Powered Credit Risk Assessment Tool</p></div>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center;'>🏦 Loan Default Risk AI</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: #94a3b8;'>Precision ML for Credit Assessment</p>", unsafe_allow_html=True)
 
 if missing_files:
-    st.error(f"Required system files missing: {', '.join(missing_files)}")
+    st.error(f"Missing Assets: {', '.join(missing_files)}")
     st.stop()
 
-# Layout centering
-_, center_col, _ = st.columns([1, 2, 1])
+# Bento Layout using columns
+col_form, col_res = st.columns([1.5, 1], gap="large")
 
-with center_col:
-    with st.form("loan_analysis_form"):
-        st.subheader("Input Financial Profile")
+with col_form:
+    st.markdown('<div class="bento-card">', unsafe_allow_html=True)
+    with st.form("bento_form"):
+        st.subheader("📋 Applicant Data")
         
-        income = st.number_input("Annual Income ($)", 0, 1000000, 60000)
-        credit = st.number_input("Total Credit Requested ($)", 0, 2000000, 150000)
+        # Row 1
+        c1, c2 = st.columns(2)
+        income = c1.number_input("Annual Income ($)", 0, 1000000, 65000)
+        credit = c2.number_input("Loan Amount ($)", 0, 2000000, 150000)
         
-        col_left, col_right = st.columns(2)
-        with col_left:
-            age = st.slider("Applicant Age", 18, 85, 30)
-            ext_a = st.slider("Internal Risk Score A", 0.0, 1.0, 0.5)
-        with col_right:
-            employment = st.slider("Years of Employment", 0, 50, 5)
-            ext_b = st.slider("Internal Risk Score B", 0.0, 1.0, 0.5)
-            
-        submitted = st.form_submit_button("RUN CLASSIFICATION")
+        # Row 2
+        c3, c4 = st.columns(2)
+        age = c3.slider("Age (Years)", 18, 85, 30)
+        emp = c4.slider("Work History (Years)", 0, 50, 8)
+        
+        # Row 3
+        st.markdown("---")
+        ext_a = st.slider("Credit Risk Factor A", 0.0, 1.0, 0.52)
+        ext_b = st.slider("Credit Risk Factor B", 0.0, 1.0, 0.48)
+        
+        submitted = st.form_submit_button("GENERATE ANALYSIS")
+    st.markdown('</div>', unsafe_allow_html=True)
 
-    if submitted:
-        # Preprocessing & Feature Engineering
-        # Based on Model_training.ipynb logic
-        raw_data = {
-            "AMT_INCOME_TOTAL": income, 
-            "AMT_CREDIT": credit, 
-            "DAYS_BIRTH": -int(age * 365), 
-            "DAYS_EMPLOYED": -int(employment * 365),
-            "EXT_SOURCE_2": ext_a, 
-            "EXT_SOURCE_3": ext_b,
+with col_res:
+    st.markdown('<div class="bento-card" style="height: 100%;">', unsafe_allow_html=True)
+    st.subheader("🎯 Live Report")
+    
+    if not submitted:
+        st.info("Waiting for data submission...")
+        st.markdown("""
+        <small style='color: #64748b;'>
+        • Model: LightGBM<br>
+        • Feature Count: 50<br>
+        • Status: Ready
+        </small>
+        """, unsafe_allow_html=True)
+    else:
+        # Preprocessing
+        raw = {
+            "AMT_INCOME_TOTAL": income, "AMT_CREDIT": credit, 
+            "DAYS_BIRTH": -int(age * 365), "DAYS_EMPLOYED": -int(emp * 365),
+            "EXT_SOURCE_2": ext_a, "EXT_SOURCE_3": ext_b,
             "CREDIT_INCOME_RATIO": credit / (income + 1)
         }
         
         top_feats = assets["top_feats"]
-        # Align input with the top 50 features used in training
-        input_df = pd.DataFrame([{f: raw_data.get(f, 0.0) for f in top_feats}])[top_feats]
+        X = pd.DataFrame([{f: raw.get(f, 0.0) for f in top_feats}])[top_feats]
         
-        probability = assets["model"].predict_proba(input_df)[0][1]
-        decision_threshold = assets["threshold"]["threshold"]
+        prob = assets["model"].predict_proba(X)[0][1]
+        thresh = assets["threshold"]["threshold"]
 
-        st.markdown("---")
-        st.write(f"**Default Probability:** {probability:.1%}")
-        st.progress(probability)
+        # Results Display
+        st.write(f"Default Probability: **{prob:.1%}**")
+        st.progress(prob)
 
-        if probability >= decision_threshold:
-            st.markdown(f"""<div class="result-card risk-high">
-                <h3>RESULT: HIGH RISK</h3>
-                <p>Classification: LIKELY DEFAULT</p>
+        if prob >= thresh:
+            st.markdown(f"""<div class="res-box risk-high">
+                <h3>RESULT: REJECTED</h3>
+                <p>Probability exceeds threshold ({thresh:.2f})</p>
                 </div>""", unsafe_allow_html=True)
         else:
-            st.markdown(f"""<div class="result-card risk-low">
-                <h3>RESULT: LOW RISK</h3>
-                <p>Classification: LIKELY REPAYMENT</p>
+            st.markdown(f"""<div class="res-box risk-low">
+                <h3>RESULT: APPROVED</h3>
+                <p>Applicant fits safety parameters</p>
                 </div>""", unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
