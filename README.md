@@ -2,18 +2,30 @@
 Loan Default Risk Classification using Machine Learning
 Project Title
 
+
 Loan Default Risk Classification for Banking and Financial Risk Assessment
 
+
 Team Members
+
 nived pd
+
 lubaba
+
 nikhil as
+
 Course Details
+
 Institution: Kerala University of Digital Sciences, Innovation and Technology
+
 Programme: [Add Programme Name –  Masters program of datascience 
+
 Academic Year:2026
+
 1. Project Overview
+2. 
 1.1 Problem Statement
+   
 
 Financial institutions incur significant losses due to loan defaults. The objective of this project is to develop a predictive machine learning model capable of identifying high-risk applicants prior to loan disbursement. Early risk detection enables banks to minimize credit losses and improve portfolio quality.
 
