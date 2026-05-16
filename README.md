@@ -18,6 +18,26 @@ Programme: [Add Programme Name –  Masters program of datascience
 
 Academic Year:2026
 
+
+Team Contributions
+
+This project was developed collaboratively, with each member contributing to specific stages of the machine learning lifecycle:
+
+Nikhil A S
+
+Data collection and preprocessing
+Exploratory Data Analysis (EDA)
+
+Lubaba
+
+Model preparation and architecture design
+Model training and evaluation
+
+P D Nived
+
+Application deployment
+Model interpretability and explanation
+
 1. Project Overview
    
 1.1 Problem Statement
