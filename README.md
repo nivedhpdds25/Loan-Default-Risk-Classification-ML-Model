@@ -6,15 +6,11 @@ Project Title
 Loan Default Risk Classification for Banking and Financial Risk Assessment
 
 
-Team Members      
+## Team Members
 
-nived pd        253209
-
-lubaba
-
-nikhil as       253221
-
-Course Details
+- P D Nivedh (MSc Data Science and BioAI)
+- Nikhil A S (MSc Data Science and BioAI)
+- LUBABA (MSc Data Science with Specialization in Computational Sciences)
 
 Institution: Kerala University of Digital Sciences, Innovation and Technology
 
